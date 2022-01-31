@@ -1,0 +1,91 @@
+---
+title: "Univariate Plot"
+author: "Chuhan Liu"
+date: "1/24/2022"
+output: html_document
+---
+
+Getting the data:
+```{r}
+library(rio)
+
+location='https://github.com/chuhanl/Visual-Analytics/raw/main/'
+file='ACS%202019%20weighted%20subsample.dta'
+link=paste0(location,file)
+mydata=import(link)
+```
+
+Frequency table:
+```{r}
+absoluteT=table(mydata$marst,
+                exclude = 'nothing')
+
+#rename the values
+newNames=c('Married, spouse present','Married, spouse absent','Separated','Divorced','Widowed','Never married/single')
+names(absoluteT)=newNames
+
+absoluteT
+```
+
+Relative values:
+```{r}
+prop.table(absoluteT)
+propT=prop.table(absoluteT)*100
+```
+
+Rename the values:
+```{r}
+tableFreq=as.data.frame(absoluteT)
+names(tableFreq)=c("MaritalStatus","Count")
+tableFreq$Percent=as.vector(propT)
+
+tableFreq
+```
+```{r}
+library(ggplot2)
+```
+
+The base:
+```{r}
+marstOrd=tableFreq[order(tableFreq$Percent,decreasing = TRUE),'MaritalStatus']
+base = ggplot(data = tableFreq, 
+             aes(x = MaritalStatus,
+                 y = Percent))
+base= base + scale_x_discrete(limits=marstOrd)
+base= base + theme_classic()
+
+plot1 = base + geom_bar(fill ="orange",
+                        stat = 'identity')
+plot1 = plot1 + theme(axis.text.x = element_text(angle = 30, size = 8,hjust = 1))
+```
+Add elements:
+```{r}
+#add titles
+titleText='Figure 1: Marital Status in the U.S. in 2019'
+sourceText='Source: 2019 American Community Survey (ACS)'
+
+plot2 = plot1 + labs(title=titleText,
+                     x =NULL, 
+                     y = NULL,
+                     caption = sourceText)
+
+#customize the vertical axes
+library(scales)
+
+plot3 = plot2 + scale_y_continuous(breaks=c(0,20,40),
+                                   labels=unit_format(suffix = '%')) 
+
+#adjust title position
+plot4 = plot3 + theme(plot.title = element_text(hjust = 0.5))
+
+#annotate the bars
+LABELS=paste0(round(tableFreq$Percent,2), '%')
+
+plot5 = plot4 + geom_text(vjust=0,
+                          size = 4,
+                          aes(y = Percent,
+                              label = LABELS))
+
+plot5
+```
+
