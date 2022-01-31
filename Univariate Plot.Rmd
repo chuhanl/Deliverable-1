@@ -47,14 +47,14 @@ library(ggplot2)
 
 The base:
 ```{r}
-marstOrd=tableFreq[order(tableFreq$Percent,decreasing = TRUE),'MaritalStatus']
+marstOrd=tableFreq[order(tableFreq$Percent),'MaritalStatus']
 base = ggplot(data = tableFreq, 
              aes(x = MaritalStatus,
                  y = Percent))
 base= base + scale_x_discrete(limits=marstOrd)
 base= base + theme_classic()
 
-plot1 = base + geom_bar(fill ="orange",
+plot1 = base + geom_bar(fill ="bisque1",
                         stat = 'identity')
 plot1 = plot1 + theme(axis.text.x = element_text(angle = 30, size = 8,hjust = 1))
 ```
@@ -73,6 +73,7 @@ plot2 = plot1 + labs(title=titleText,
 library(scales)
 
 plot3 = plot2 + scale_y_continuous(breaks=c(0,20,40),
+                                   limits = c(0, 50),
                                    labels=unit_format(suffix = '%')) 
 
 #adjust title position
@@ -81,11 +82,12 @@ plot4 = plot3 + theme(plot.title = element_text(hjust = 0.5))
 #annotate the bars
 LABELS=paste0(round(tableFreq$Percent,2), '%')
 
-plot5 = plot4 + geom_text(vjust=0,
-                          size = 4,
+plot5 = plot4 + geom_text(hjust=0,
+                          size = 5,
                           aes(y = Percent,
                               label = LABELS))
 
+plot5 = plot5 + coord_flip()
 plot5
 ```
 
