@@ -56,7 +56,7 @@ base= base + theme_classic()
 
 plot1 = base + geom_bar(fill ="bisque1",
                         stat = 'identity')
-plot1 = plot1 + theme(axis.text.x = element_text(angle = 30, size = 8,hjust = 1))
+plot1 = plot1 + theme(axis.text.y = element_text(size = 8,hjust = 1,face='bold'))
 ```
 Add elements:
 ```{r}
